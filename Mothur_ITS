@@ -1,0 +1,42 @@
+# Analysis of fungal communities.
+## Make ‘.files’ with a list of samples and associated fastq sequences.
+mothur > make.file(inputdir="" , type=fastq, prefix=ITS)
+
+## Extract the sequence and quality scores data from fastq files and assemble contigs.
+mothur > make.contigs(file=ITS.files)
+
+## Generate descriptive statistics.
+mothur > summary.seqs(fasta=ITS.trim.contigs.fasta) 
+
+## Remove any sequences with ambiguous bases (“N”) and sequences longer than Y due to variability in ITS length among different organisms.
+mothur > screen.seqs(fasta=ITS.trim.contigs.fasta, group=ITS.contigs.groups, maxlength=Y, summary=ITS.trim.contigs.summary,  maxhomop=13, maxambig=0)
+
+## Collapse identical sequences. Store representative contigs in .fasta.
+mothur > unique.seqs(fasta=ITS.trim.contigs.good.fasta)
+
+## Create a count table of current unique sequences.
+mothur > count.seqs(name=ITS.trim.contigs.good.names, group=ITS.contigs.good.groups)
+
+## De-noise sequences and collapse similar sequences that are within the allowed mismatch threshold (diffs=2).
+mothur > pre.cluster(fasta=ITS.trim.contigs.good.unique.fasta, count=ITS.trim.contigs.good.count_table, diffs=2) 
+
+## Detect and remove chimera using UCHIME.
+mothur > chimera.uchime(fasta=ITS.trim.contigs.good.unique.precluster.fasta, count=ITS.trim.contigs.good.unique.precluster.count_table, dereplicate=t)
+
+mothur > remove.seqs(fasta=ITS.trim.contigs.good.unique.precluster.fasta, accnos=ITS.trim.contigs.good.unique.precluster.denovo.vsearch.accnos)
+
+## Assign taxonomy to individual contigs.
+mothur > classify.seqs(fasta=ITS.trim.contigs.good.unique.precluster.pick.fasta, count=ITS.trim.contigs.good.unique.precluster.denovo.uchime.pick.count_table, reference=UNITEv6_sh_dynamic_s.fasta, taxonomy=UNITEv6_sh_dynamic_s.tax)
+
+## Remove non-fungal contigs.
+mothur > remove.lineage(fasta=ITS.trim.contigs.good.unique.precluster.pick.fasta, count=ITS.trim.contigs.good.unique.precluster.denovo.uchime.pick.count_table, taxonomy=ITS.trim.contigs.good.unique.precluster.pick.UNITEv6_sh_dynamic_s.wang.taxonomy, taxon= Protozoa-Chromista-Eukaryota_kgd_Incertae_sedis-Bacteria-Animalia-Plantae-Plantae_unclassified-unknown-Protista-Fungi_unclassified-unclassified_Fungi)
+
+## Assign contigs to OTUs.
+mothur > cluster(column=ITS.trim.contigs.good.unique.precluster.pick.pick.dist, count = ITS.trim.contigs.good.unique.precluster.denovo.vsearch.pick.pick.count_table, cutoff=0.05)
+
+## Quantify OTUs using the 0.95 similarity cutoff. 
+mothur > make.shared(list=ITS.trim.contigs.good.unique.precluster.pick.pick.opti_mcc.list, count=ITS.trim.contigs.good.unique.precluster.denovo.vsearch.pick.pick.count_table, label=0.05)
+
+## Assign taxonomy to OTUs to generate a taxonomy file.
+## Outcome file will project: name of OTU, size (how many exist in a whole sample set), taxonomic profiles
+mothur > classify.otu(list=ITS.trim.contigs.good.unique.precluster.pick.pick.opti_mcc.list, count=ITS.trim.contigs.good.unique.precluster.denovo.vsearch.pick.pick.count_table, taxonomy=ITS.trim.contigs.good.unique.precluster.pick.UNITEv6_sh_dynamic_s.wang.pick.taxonomy, label=0.03)

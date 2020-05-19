@@ -20,13 +20,19 @@ spadeR_16s_estimate <- richness_estimate(spadeR_16s)
 spadeR_ITS_estimate <- richness_estimate(spadeR_ITS)
   
 ## Plot rarefaction curves.
-library(ggrare)
-rarecurve_16s <- ggrare(phyloseq1, step = 100, se=TRUE, color="Sampletype")
-rarecurve1 <- rarecurve_16s + facet_grid(Sampletype ~.) + scale_color_manual(values=c("Red", "Blue"))+  theme(strip.background = element_blank(),strip.text.y = element_blank(), legend.position="none")+xlab("Number of OTUs") + ylab("Number of unique OTUs") +scale_x_continuous(expand = c(0, 0)) + scale_y_continuous(expand = c(0, 0))+annotate("segment", x=-Inf, xend=Inf, y=-Inf, yend=-Inf)+annotate("segment", x=-Inf, xend=-Inf, y=-Inf, yend=Inf)
+library(ranacapa)
+rarecurve_16s <- ggrare(phyloseq1, step = 100, se=FALSE,  color="Arb_site")
+rarecurve1 <- rarecurve_16s + facet_grid(Sampletype ~ month, scales = "free_x") + 
+  scale_color_manual(values = c("#1B9E77", "#D95F02", "#7570B3", "#E7298A", "#66A61E", "#E6AB02")) +  
+  theme(strip.background = element_blank(),strip.text.y = element_blank(), legend.position="none")+xlab("Number of OTUs") + ylab("Number of unique OTUs") +scale_x_continuous(expand = c(0, 0)) + scale_y_continuous(expand = c(0, 0))+annotate("segment", x=-Inf, xend=Inf, y=-Inf, yend=-Inf)+annotate("segment", x=-Inf, xend=-Inf, y=-Inf, yend=Inf)
 
-rarecurve_ITS <- ggrare(phyloseq2, step = 100, se=TRUE, color="Sampletype")
-rarecurve2 <- rarecurve_ITS + facet_grid(Sampletype ~., scales = "free_x") +scale_color_manual(values= c("Red", "Blue"))+  theme(strip.background = element_blank(),strip.text.y = element_blank())+xlab("Number of OTUs") + ylab("Number of unique OTUs") + scale_x_continuous(expand = c(0, 0)) + scale_y_continuous(expand = c(0, 0))+annotate("segment", x=-Inf, xend=Inf, y=-Inf, yend=-Inf)+annotate("segment", x=-Inf, xend=-Inf, y=-Inf, yend=Inf)
-  
+rarecurve_ITS <- ggrare(phyloseq2, step = 100, se=FALSE,  color="Arb_site")
+rarecurve2 <- rarecurve_ITS + facet_grid(Sampletype ~ month, scales = "free_x") +  
+  scale_color_manual(values = c("#1B9E77", "#D95F02", "#7570B3", "#E7298A", "#66A61E", "#E6AB02")) + 
+  theme(strip.background = element_blank(),strip.text.y = element_blank())+xlab("Number of OTUs") + ylab("Number of unique OTUs") + scale_x_continuous(expand = c(0, 0)) + scale_y_continuous(expand = c(0, 0))+annotate("segment", x=-Inf, xend=Inf, y=-Inf, yend=-Inf)+annotate("segment", x=-Inf, xend=-Inf, y=-Inf, yend=Inf)
+
 rare1 <-plot_grid(rarecurve1, rarecurve2 + theme(legend.position="none"), labels=c("A","B"),label_size = 20)
 legend_rare <- get_legend(rarecurve2)
-rare2 <-plot_grid(rare1, legend_rare, rel_widths = c(7,1))
+rare2 <-plot_grid(rare1, legend_rare, rel_widths = c(15,1))
+rare2
+

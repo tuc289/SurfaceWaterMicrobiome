@@ -56,6 +56,7 @@ classification_mlr <- function(object, env, RRF, taxa_level){
                                 stringsAsFactors = TRUE)
     dataset_rf$y <- as.factor(dataset_rf$y)
   }
+                         
   require(mlr)
   require(party)
   require(randomForest)

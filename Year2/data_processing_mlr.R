@@ -44,7 +44,6 @@ normalize_clr <- function(phyloseq_object) {
   final_phyloseq <- phyloseq(otu_table(otu.n0.clr, taxa_are_rows=F), tax_table(A), sample_data(A))
   return(final_phyloseq)
 }
-
 CLR_FIN <- normalize_clr(phyloseq_fin_taxa)
 return(list("PA" = PA_FIN, "RA" = REL_FIN, "CLR" = CLR_FIN))
 }
